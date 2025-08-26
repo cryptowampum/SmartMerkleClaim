@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#6b46c1" />
+    
+    <!-- SEO and Social Meta Tags -->
+    <meta name="description" content="Claim your USDC rewards based on sSPORK holdings. Gasless claiming available through Unicorn wallets." />
+    <meta name="keywords" content="sSPORK, USDC, rewards, cryptocurrency, gasless, Unicorn, Polygon" />
+    <meta name="author" content="@cryptowampum" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="sSPORK Rewards Distribution" />
+    <meta property="og:description" content="Claim your USDC rewards based on prior year sSPORK holdings. Zero gas fees with Unicorn wallets." />
+    <meta property="og:image" content="%PUBLIC_URL%/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="sSPORK Rewards Distribution" />
+    <meta property="twitter:description" content="Claim your USDC rewards based on prior year sSPORK holdings. Zero gas fees with Unicorn wallets." />
+    <meta property="twitter:image" content="%PUBLIC_URL%/twitter-image.png" />
+    
+    <!-- Preconnect to improve performance -->
+    <link rel="preconnect" href="https://polygon-rpc.com" />
+    <link rel="preconnect" href="https://api.thirdweb.com" />
+    
+    <!-- PWA manifest -->
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Fonts (optional - using system fonts for performance) -->
+    <style>
+      /* Prevent flash of unstyled content */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        margin: 0;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 100vh;
+      }
+      
+      /* Loading state */
+      #root:empty::after {
+        content: "Loading sSPORK Rewards...";
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-size: 1.2rem;
+        color: #6b46c1;
+        font-weight: 600;
+      }
+    </style>
+    
+    <title>🍴 sSPORK Rewards Distribution</title>
+  </head>
+  <body>
+    <noscript>
+      <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+        <h1>🍴 sSPORK Rewards Distribution</h1>
+        <p>You need to enable JavaScript to run this dApp.</p>
+        <p>This application requires JavaScript to:</p>
+        <ul style="text-align: left; max-width: 400px; margin: 0 auto;">
+          <li>Connect to your crypto wallet</li>
+          <li>Check your eligibility for rewards</li>
+          <li>Process claim transactions</li>
+          <li>Interact with the Polygon blockchain</li>
+        </ul>
+        <p>Created by <strong>@cryptowampum</strong> • Developed with <strong>Claude AI</strong></p>
+      </div>
+    </noscript>
+    
+    <!-- Main React app mounts here -->
+    <div id="root"></div>
+    
+    <!-- 
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start`.
+      To create a production bundle, use `npm run build`.
+      
+      Created by: @cryptowampum
+      Developed with: Claude AI
+    -->
+  </body>
+</html>

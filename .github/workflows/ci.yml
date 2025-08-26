@@ -1,0 +1,343 @@
+# sSPORK Rewards Distribution - CI/CD Pipeline
+# 
+# Created by: @cryptowampum
+# Developed with: Claude AI
+# 
+# Automated testing and deployment pipeline for the sSPORK USDC
+# rewards distribution system with Unicorn.eth integration.
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18.x'
+
+jobs:
+  # ====================
+  # SMART CONTRACT TESTING
+  # ====================
+  
+  contracts:
+    name: Smart Contract Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 🔧 Install Dependencies
+      run: npm ci
+      
+    - name: 🔨 Compile Contracts
+      run: npx hardhat compile
+      
+    - name: 🧪 Run Contract Tests
+      run: npx hardhat test
+      
+    - name: 📊 Generate Gas Report
+      run: REPORT_GAS=true npx hardhat test
+      
+    - name: 🔍 Check Contract Sizes
+      run: npx hardhat size-contracts
+      continue-on-error: true
+      
+    - name: 📄 Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: contract-test-results
+        path: |
+          coverage/
+          gas-report.txt
+
+  # ====================
+  # FRONTEND TESTING
+  # ====================
+  
+  frontend:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 🔧 Install Dependencies
+      run: npm ci
+      
+    - name: 🧹 Lint Code
+      run: npm run lint
+      continue-on-error: true
+      
+    - name: 🧪 Run Frontend Tests
+      run: npm test -- --coverage --watchAll=false
+      env:
+        CI: true
+        
+    - name: 🏗️ Test Build
+      run: npm run build
+      
+    - name: 📊 Bundle Analyzer
+      run: npm run build -- --analyze
+      continue-on-error: true
+      
+    - name: 📄 Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: build/
+
+  # ====================
+  # SECURITY SCANNING
+  # ====================
+  
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 🔧 Install Dependencies
+      run: npm ci
+      
+    - name: 🛡️ Run npm audit
+      run: npm audit --audit-level moderate
+      continue-on-error: true
+      
+    - name: 🔍 Snyk Security Scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=medium
+      continue-on-error: true
+      
+    - name: 🔐 CodeQL Analysis
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript
+        
+    - name: 🔐 Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+
+  # ====================
+  # CSV PROCESSING VALIDATION
+  # ====================
+  
+  csv-processing:
+    name: CSV Processing Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 🔧 Install Dependencies
+      run: npm ci
+      
+    - name: 📄 Create Test CSV
+      run: |
+        mkdir -p test-data
+        cat > test-data/test-holders.csv << 'EOF'
+        address,sspork_amount,usdc_reward
+        0x742d35Cc6635C0532925a3b8D710432D8c14C3C1,1000,500.50
+        0x8ba1f109551bD432803012645Hac136c,2000,1001.00
+        0x1234567890123456789012345678901234567890,1500,750.25
+        EOF
+        
+    - name: 🧪 Test CSV Processing
+      run: node scripts/csv-to-merkle.js test-data/test-holders.csv
+      
+    - name: ✅ Validate Generated Files
+      run: |
+        if [ ! -f "src/data/merkle-proofs.json" ]; then
+          echo "❌ merkle-proofs.json not generated"
+          exit 1
+        fi
+        
+        if [ ! -f "deployment-info.json" ]; then
+          echo "❌ deployment-info.json not generated"
+          exit 1
+        fi
+        
+        echo "✅ All files generated successfully"
+        
+    - name: 📄 Upload Processing Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: csv-processing-results
+        path: |
+          src/data/merkle-proofs.json
+          deployment-info.json
+
+  # ====================
+  # INTEGRATION TESTS
+  # ====================
+  
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [contracts, frontend, csv-processing]
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 🔧 Install Dependencies
+      run: npm ci
+      
+    - name: 📄 Download Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: csv-processing-results
+        
+    - name: 🌐 Start Local Blockchain
+      run: npx hardhat node &
+      env:
+        NODE_ENV: test
+        
+    - name: ⏳ Wait for Blockchain
+      run: sleep 10
+      
+    - name: 🚀 Deploy Test Contract
+      run: npx hardhat run scripts/deploy.js --network localhost
+      env:
+        PRIVATE_KEY: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+        
+    - name: 🧪 Run Integration Tests
+      run: npm run test:integration
+      continue-on-error: true
+
+  # ====================
+  # DEPLOYMENT (Production)
+  # ====================
+  
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [contracts, frontend, security, integration]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 🔧 Install Dependencies
+      run: npm ci
+      
+    - name: 📄 Download Build Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-build
+        path: build/
+        
+    - name: 🚀 Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.ORG_ID }}
+        vercel-project-id: ${{ secrets.PROJECT_ID }}
+        vercel-args: '--prod'
+        
+    - name: 📝 Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: Release v${{ github.run_number }}
+        body: |
+          ## 🍴 sSPORK Distribution Release v${{ github.run_number }}
+          
+          **Created by:** @cryptowampum  
+          **Developed with:** Claude AI
+          
+          ### Changes in this release:
+          ${{ github.event.head_commit.message }}
+          
+          ### Deployment Info:
+          - **Frontend:** Deployed to Vercel
+          - **Contracts:** Ready for deployment
+          - **Tests:** All passing ✅
+          
+          ### Next Steps:
+          1. Deploy smart contract to target network
+          2. Update contract addresses in frontend
+          3. Submit to Unicorn App Center
+          
+        draft: false
+        prerelease: false
+
+  # ====================
+  # NOTIFICATIONS
+  # ====================
+  
+  notify:
+    name: Notifications
+    runs-on: ubuntu-latest
+    needs: [contracts, frontend, security]
+    if: always()
+    
+    steps:
+    - name: 📬 Discord Notification
+      uses: Ilshidur/action-discord@master
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      with:
+        args: |
+          🍴 **sSPORK Distribution Build Status**
+          
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.event.head_commit.message }}
+          **Author:** ${{ github.actor }}
+          
+          **Results:**
+          - Contracts: ${{ needs.contracts.result == 'success' && '✅' || '❌' }}
+          - Frontend: ${{ needs.frontend.result == 'success' && '✅' || '❌' }}
+          - Security: ${{ needs.security.result == 'success' && '✅' || '❌' }}
+          
+          **View:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

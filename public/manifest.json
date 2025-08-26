@@ -1,0 +1,37 @@
+{
+  "short_name": "sSPORK Rewards",
+  "name": "sSPORK USDC Rewards Distribution",
+  "description": "Claim your USDC rewards based on prior year sSPORK holdings. Created by @cryptowampum, developed with Claude AI.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    },
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#6b46c1",
+  "background_color": "#f8fafc",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+}

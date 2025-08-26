@@ -119,3 +119,15 @@ express Statement of Purpose.
  d. Affirmer understands and acknowledges that Creative Commons is not a
     party to this document and has no duty or obligation with respect to
     this CC0 or use of the Work.
+
+
+ADDITIONAL ATTRIBUTION:
+
+This project was developed with assistance from Claude AI (Anthropic).
+
+The Unicorn.eth integration components utilize the Unicorn wallet infrastructure
+and are subject to Unicorn's terms of service and usage policies.
+
+Thirdweb components are used under their respective licenses.
+
+OpenZeppelin smart contract libraries are used under the MIT license.

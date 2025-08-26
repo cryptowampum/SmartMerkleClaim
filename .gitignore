@@ -1,0 +1,197 @@
+# sSPORK Rewards Distribution - Git Ignore
+# 
+# Created by: @cryptowampum
+# Developed with: Claude AI
+# 
+# Prevents sensitive files and build artifacts from being committed to git
+
+# ====================
+# SECURITY - NEVER COMMIT THESE
+# ====================
+
+# Environment variables (contains private keys!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Private keys and secrets
+*.pem
+*.key
+private/
+secrets/
+
+# Deployment records with sensitive info
+deployment-*.json
+
+# ====================
+# NODE.JS
+# ====================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# ====================
+# REACT BUILD
+# ====================
+
+# Production build
+build/
+dist/
+
+# Static files
+.cache/
+
+# ====================
+# HARDHAT & BLOCKCHAIN
+# ====================
+
+# Hardhat files
+cache/
+artifacts/
+typechain/
+typechain-types/
+
+# Hardhat network files
+deployments/
+
+# Local blockchain data
+.openzeppelin/
+
+# ====================
+# GENERATED DATA FILES
+# ====================
+
+# Large CSV files (add your actual filename here)
+data/sspork-holders.csv
+data/large-*.csv
+
+# Generated Merkle proofs (these are usually recreated)
+src/data/merkle-proofs.json
+
+# Temporary processing files
+temp/
+*.tmp
+
+# ====================
+# DEVELOPMENT TOOLS
+# ====================
+
+# VSCode
+.vscode/
+!.vscode/extensions.json
+
+# WebStorm
+.idea/
+
+# Vim
+*.swp
+*.swo
+
+# Emacs
+*~
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ====================
+# OPERATING SYSTEM
+# ====================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ====================
+# LOGS & DATABASES
+# ====================
+
+# Logs
+logs
+*.log
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# ====================
+# TESTING
+# ====================
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Jest
+.jest/
+
+# ====================
+# PACKAGE MANAGERS
+# ====================
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# PNPM
+.pnpm-store/
+
+# ====================
+# OPTIONAL: INCLUDE THESE
+# ====================
+
+# You might want to include these in git:
+# !.env.example
+# !deployment-info.json (if you want to share config)
+# !src/data/merkle-proofs.json (if you want to commit the final proofs)
+
+# ====================
+# PROJECT SPECIFIC
+# ====================
+
+# Large holder data files
+holders-*.csv
+recipients-*.csv
+
+# Contract verification artifacts
+verify/
+
+# Gas reports
+gas-report.txt
+
+# Deployment logs
+deployment-log-*.txt
